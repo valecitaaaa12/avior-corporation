@@ -346,12 +346,12 @@ Add-Fig 6 'Imagen publicada en Docker Hub: tinivalda/avior-web:latest'
 
 # ------------------------------------------------------------
 Add-H1 '6. Creacion manual de la VM en Oracle Cloud (OCI)'
-Add-P 'Se despliego una instancia compute manualmente desde la consola de Oracle Cloud con sistema operativo Ubuntu y plano Always Free (VM.Standard.E2.1.Micro o equivalente).'
+Add-P 'Se despliego una instancia compute manualmente desde la consola de Oracle Cloud con sistema operativo Ubuntu 24.04 LTS (x86_64) y plano Always Free (VM.Standard.E2.1.Micro, 1 OCPU y 1 GB de memoria), en la region Brazil East (Sao Paulo) con el nombre avior-web.'
 
 Add-H2 '6.1 Pasos en la consola de OCI'
 Add-B 'Inicio > Compute > Instances > Create Instance.'
-Add-B 'Nombre: avior-vm. Imagen: Canonical Ubuntu 22.04 (o 24.04) aarch64/amd64.'
-Add-B 'Plano (shape): VM.Standard.E2.1.Micro ( Always Free ) o el disponible de la cuenta.'
+Add-B 'Nombre: avior-web. Imagen: Canonical Ubuntu 24.04 (build 2026.09.18-0).'
+Add-B 'Plano (shape): VM.Standard.E2.1.Micro ( Always Free ), 1 OCPU / 1 GB RAM.'
 Add-B 'Clave SSH: subir o generar el par de claves (se descarga el archivo .key/.pem).'
 Add-B 'Networking: VCN con Security List que permita ingress TCP 22 (SSH) y TCP 80 (HTTP) desde 0.0.0.0/0.'
 Add-B 'Create Instance y esperar el estado RUNNING con IP publica asignada.'
@@ -359,7 +359,7 @@ Add-B 'Create Instance y esperar el estado RUNNING con IP publica asignada.'
 Add-H2 '6.2 Conexión a la VM desde la terminal'
 Add-Code @'
 # Windows (PowerShell) - conectarse por SSH
-ssh -i avior-key.key ubuntu@<IP-PUBLICA>
+ssh -i $env:USERPROFILE\.ssh\avior-oci ubuntu@163.176.212.212
 
 # Verificar sistema y recursos
 hostnamectl
@@ -403,12 +403,12 @@ Add-H2 '7.2 Salida esperada'
 Add-Code @'
 $ docker pull tinivalda/avior-web:latest
 latest: Pulling from tinivalda/avior-web
-Digest: sha256:23edc008e916...
+Digest: sha256:4ac94a5b9094...
 Status: Downloaded newer image
 
 $ docker ps
-CONTAINER ID   IMAGE                                STATUS        PORTS
-a91f...        tinivalda/avior-web:latest      Up (healthy)  0.0.0.0:80->80/tcp
+CONTAINER ID   IMAGE                         STATUS                   PORTS
+8e7581889d4a   tinivalda/avior-web:latest    Up (health: starting)    0.0.0.0:80->80/tcp
 
 $ curl http://localhost/healthz
 OK
@@ -422,21 +422,21 @@ Add-Fig 10 'docker ps en la VM y sitio publicado en la IP publica'
 Add-H1 '8. Verificacion de la solucion en la IP publica'
 Add-P 'Con el contenedor en ejecucion y el puerto 80 habilitado en la Security List de OCI, la solucion queda disponible en el navegador desde cualquier equipo:'
 Add-Code @'
-http://<IP-PUBLICA>          -> Sitio institucional AVIOR
-http://<IP-PUBLICA>/login    -> Aula Virtual (Sistema Academico)
-http://<IP-PUBLICA>/healthz  -> Endpoint de salud (OK)
+http://163.176.212.212          -> Sitio institucional AVIOR
+http://163.176.212.212/login    -> Aula Virtual (Sistema Academico)
+http://163.176.212.212/healthz  -> Endpoint de salud (OK)
 '@
 Add-Fig 11 'Navegador accediendo a la solucion mediante la IP publica de la VM'
 
 # ------------------------------------------------------------
 Add-H1 '9. Tabla resumen de comandos'
 Add-Table @('Fase', 'Comando clave', 'Objetivo') @(
-    @('Build local', 'docker build -t usuario/avior-web:latest .', 'Generar la imagen Docker'),
-    @('Ejecucion local', 'docker run -d -p 80:80 --name avior-web usuario/avior-web', 'Levantar el contenedor'),
+    @('Build local', 'docker build -t tinivalda/avior-web:latest .', 'Generar la imagen Docker'),
+    @('Ejecucion local', 'docker run -d -p 80:80 --name avior-web tinivalda/avior-web:latest', 'Levantar el contenedor'),
     @('CI/CD', 'git push -u origin main', 'Disparar GitHub Actions hacia Docker Hub'),
     @('VM - Docker', 'curl -fsSL https://get.docker.com | sudo sh', 'Instalar Docker en la VM'),
-    @('VM - Descarga', 'docker pull usuario/avior-web:latest', 'Bajar la imagen en la VM'),
-    @('VM - Despliegue', 'docker run -d -p 80:80 --restart unless-stopped usuario/avior-web', 'Publicar la solucion en la IP publica')
+    @('VM - Descarga', 'docker pull tinivalda/avior-web:latest', 'Bajar la imagen en la VM'),
+    @('VM - Despliegue', 'docker run -d -p 80:80 --restart unless-stopped tinivalda/avior-web:latest', 'Publicar la solucion en la IP publica')
 )
 
 # ------------------------------------------------------------
