@@ -260,10 +260,10 @@ CMD ["nginx", "-g", "daemon off;"]
 Add-H2 '4.2 Comandos ejecutados en la terminal (PowerShell)'
 Add-Code @'
 # Construir la imagen
-docker build -t aviorcorp/avior-web:latest .
+docker build -t tinivalda/avior-web:latest .
 
 # Ejecutar el contenedor publicando el puerto 80
-docker run -d --name avior-web -p 80:80 aviorcorp/avior-web:latest
+docker run -d --name avior-web -p 80:80 --restart unless-stopped tinivalda/avior-web:latest
 
 # Verificar que el contenedor este corriendo
 docker ps
@@ -275,14 +275,14 @@ curl http://localhost/healthz
 Add-H2 '4.3 Salida esperada'
 Add-Code @'
 CONTAINER ID   IMAGE                        STATUS                   PORTS
-e1b3c0f8cacc   aviorcorp/avior-web:latest   Up 2 minutes (healthy)   0.0.0.0:80->80/tcp
+e1b3c0f8cacc   tinivalda/avior-web:latest   Up 2 minutes (healthy)   0.0.0.0:80->80/tcp
 
 $ curl http://localhost/healthz
 OK
 '@
 
 Add-H2 '4.4 Evidencia fotografica'
-Add-Fig 3 'Docker Desktop con la imagen aviorcorp/avior-web:latest construida'
+Add-Fig 3 'Docker Desktop con la imagen tinivalda/avior-web:latest construida'
 Add-Fig 4 'Contenedor avior-web corriendo y sitio accesible en http://localhost'
 
 # ------------------------------------------------------------
@@ -293,7 +293,7 @@ Add-H2 '5.1 Pasos previos en Docker Hub y GitHub'
 Add-B 'Crear un repositorio publico llamado avior-web en https://hub.docker.com.'
 Add-B 'En GitHub: Settings > Secrets and variables > Actions > New repository secret.'
 Add-Table @('Secreto (nombre)', 'Valor') @(
-    @('DOCKERHUB_USERNAME', 'Tu usuario de Docker Hub (ej: nataliavaldajr)'),
+    @('DOCKERHUB_USERNAME', 'Tu usuario de Docker Hub (ej: tinivalda)'),
     @('DOCKERHUB_TOKEN', 'Personal Access Token con permisos Read/Write de Docker Hub')
 )
 
@@ -336,13 +336,13 @@ Add-Code @'
 git init -b main
 git add .
 git commit -m "feat: AVIOR v2.0 - React + Docker + CI/CD"
-git remote add origin https://github.com/<TU-USUARIO>/avior-corporation.git
+git remote add origin https://github.com/tinivalda/avior-corporation.git
 git push -u origin main
 '@
 
 Add-H2 '5.4 Evidencia fotografica'
 Add-Fig 5 'GitHub Actions: workflow "Docker Build & Push a Docker Hub" ejecutandose con exito (verde)'
-Add-Fig 6 'Imagen publicada en Docker Hub: <usuario>/avior-web:latest'
+Add-Fig 6 'Imagen publicada en Docker Hub: tinivalda/avior-web:latest'
 
 # ------------------------------------------------------------
 Add-H1 '6. Creacion manual de la VM en Oracle Cloud (OCI)'
@@ -389,10 +389,10 @@ docker --version
 docker run hello-world
 
 # 4) Descargar la imagen de la solucion desde Docker Hub
-docker pull <TU-USUARIO>/avior-web:latest
+docker pull tinivalda/avior-web:latest
 
 # 5) Desplegar la solucion en el puerto 80
-docker run -d --name avior-web -p 80:80 --restart unless-stopped <TU-USUARIO>/avior-web:latest
+docker run -d --name avior-web -p 80:80 --restart unless-stopped tinivalda/avior-web:latest
 
 # 6) Verificar el despliegue
 docker ps
@@ -401,14 +401,14 @@ curl http://localhost/healthz
 
 Add-H2 '7.2 Salida esperada'
 Add-Code @'
-$ docker pull nataliavaldajr/avior-web:latest
-latest: Pulling from nataliavaldajr/avior-web
+$ docker pull tinivalda/avior-web:latest
+latest: Pulling from tinivalda/avior-web
 Digest: sha256:23edc008e916...
 Status: Downloaded newer image
 
 $ docker ps
 CONTAINER ID   IMAGE                                STATUS        PORTS
-a91f...        nataliavaldajr/avior-web:latest      Up (healthy)  0.0.0.0:80->80/tcp
+a91f...        tinivalda/avior-web:latest      Up (healthy)  0.0.0.0:80->80/tcp
 
 $ curl http://localhost/healthz
 OK
@@ -452,7 +452,7 @@ Add-B 'Docker Documentation: https://docs.docker.com'
 Add-B 'GitHub Actions Documentation: https://docs.github.com/actions'
 Add-B 'Oracle Cloud Infrastructure: https://www.oracle.com/cloud/'
 Add-B 'React Documentation: https://react.dev'
-Add-B 'Repositorio del proyecto: https://github.com/<TU-USUARIO>/avior-corporation'
+Add-B 'Repositorio del proyecto: https://github.com/tinivalda/avior-corporation'
 
 # ---------------- Footer ----------------
 $footer = $doc.Sections.Item(1).Footers.Item(1).Range

@@ -41,10 +41,10 @@ npm run dev          # http://localhost:5173
 
 ```bash
 # Construir la imagen
-docker build -t aviorcorp/avior-web:latest .
+docker build -t tinivalda/avior-web:latest .
 
 # Ejecutar el contenedor en el puerto 80
-docker run -d --name avior-web -p 80:80 aviorcorp/avior-web:latest
+docker run -d --name avior-web -p 80:80 tinivalda/avior-web:latest
 
 # Verificar
 docker ps
@@ -74,12 +74,12 @@ git init -b main
 git add .
 git commit -m "feat: AVIOR v2.0 — React + Docker + CI/CD"
 git branch -M main
-git remote add origin https://github.com/<TU-USUARIO>/avior-corporation.git
+git remote add origin https://github.com/tinivalda/avior-corporation.git
 git push -u origin main
 ```
 
 4. La acción **"Docker Build & Push a Docker Hub"** se dispara sola y publica
-   `usuario/avior-web:latest` en Docker Hub.
+   `tinivalda/avior-web:latest` en Docker Hub.
 
 ## ☁️ Despliegue manual en VM de Oracle Cloud (OCI)
 
@@ -92,10 +92,10 @@ curl -fsSL https://get.docker.com | sudo sh
 sudo usermod -aG docker $USER && newgrp docker
 
 # 3. Descargar la imagen desde Docker Hub
-docker pull <TU-USUARIO>/avior-web:latest
+docker pull tinivalda/avior-web:latest
 
 # 4. Desplegar la solución en el puerto 80
-docker run -d --name avior-web -p 80:80 --restart unless-stopped <TU-USUARIO>/avior-web:latest
+docker run -d --name avior-web -p 80:80 --restart unless-stopped tinivalda/avior-web:latest
 
 # 5. Verificar
 docker ps

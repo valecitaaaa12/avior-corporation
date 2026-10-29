@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: aviorcorp/avior-web:latest
+    image: tinivalda/avior-web:latest
     container_name: avior-web
     ports:
       - "80:80"
