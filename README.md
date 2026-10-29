@@ -74,7 +74,7 @@ git init -b main
 git add .
 git commit -m "feat: AVIOR v2.0 — React + Docker + CI/CD"
 git branch -M main
-git remote add origin https://github.com/tinivalda/avior-corporation.git
+git remote add origin https://github.com/valecitaaaa12/avior-corporation.git
 git push -u origin main
 ```
 

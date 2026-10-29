@@ -336,7 +336,7 @@ Add-Code @'
 git init -b main
 git add .
 git commit -m "feat: AVIOR v2.0 - React + Docker + CI/CD"
-git remote add origin https://github.com/tinivalda/avior-corporation.git
+git remote add origin https://github.com/valecitaaaa12/avior-corporation.git
 git push -u origin main
 '@
 
@@ -452,7 +452,7 @@ Add-B 'Docker Documentation: https://docs.docker.com'
 Add-B 'GitHub Actions Documentation: https://docs.github.com/actions'
 Add-B 'Oracle Cloud Infrastructure: https://www.oracle.com/cloud/'
 Add-B 'React Documentation: https://react.dev'
-Add-B 'Repositorio del proyecto: https://github.com/tinivalda/avior-corporation'
+Add-B 'Repositorio del proyecto: https://github.com/valecitaaaa12/avior-corporation'
 
 # ---------------- Footer ----------------
 $footer = $doc.Sections.Item(1).Footers.Item(1).Range
