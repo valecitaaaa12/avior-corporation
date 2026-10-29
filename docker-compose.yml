@@ -1,0 +1,15 @@
+services:
+  avior-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aviorcorp/avior-web:latest
+    container_name: avior-web
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
