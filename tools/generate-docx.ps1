@@ -11,6 +11,7 @@ $GRIS_CLARO = 15790320              # RGB(240,240,240)
 $GRIS_TINTA = 11184810              # RGB(166,166,166)
 $ROJO_ALERTA = 255                  # RGB(255,0,0) en BGR -> valor 255 equivale a azul; usar 192 = rojo BGR(0,0,192)
 $outPath = "C:\Users\HP\Downloads\Proyecto Integrador - AVIOR Docker OCI.docx"
+$imgDir  = "C:\Users\HP\Downloads\capturas-avior"
 
 Write-Host "Iniciando Microsoft Word..."
 $word = New-Object -ComObject Word.Application
@@ -136,8 +137,27 @@ function Add-Table($headers, $rows) {
     $sel.TypeParagraph()
 }
 
-function Add-Fig($num, $desc) {          # recuadro para pegar captura
+function Add-Fig($num, $desc, $img = $null) {  # imagen real; si no hay archivo, recuadro para pegar captura
     Go-End
+    if ($img -and (Test-Path $img)) {
+        $shape = $doc.InlineShapes.AddPicture($img, $false, $true, $sel.Range)
+        $shape.LockAspectRatio = -1            # msoTrue: conserva proporciones
+        if ($shape.Width -gt 430) { $shape.Width = 430 }   # ancho maximo util (~15 cm)
+        Go-End
+        $sel.TypeParagraph()
+        $sel.ParagraphFormat.Alignment = 1     # centrado
+        $sel.Font.Italic = $true
+        $sel.Font.Size = 9.5
+        $sel.Font.Color = $GRIS_TINTA
+        $sel.TypeText("Figura $num - $desc")
+        Go-End
+        $sel.TypeParagraph()
+        $sel.Font.Italic = $false
+        $sel.Font.Size = 11
+        $sel.ParagraphFormat.Alignment = 0
+        Add-P ''
+        return
+    }
     $rango = $sel.Range
     $tabla = $doc.Tables.Add($rango, 1, 1)
     $tabla.Borders.Enable = 1
@@ -232,8 +252,8 @@ Add-Table @('Rol', 'Correo', 'Contrasena') @(
 )
 
 Add-H2 '3.4 Evidencia del sitio mejorado'
-Add-Fig 1 'Sitio institucional AVIOR en React (pagina de inicio)'
-Add-Fig 2 'Sistema Academico (dashboard) con los 3 roles'
+Add-Fig 1 'Sitio institucional AVIOR en React (pagina de inicio)' "$imgDir\evidencia-sitio-institucional.png"
+Add-Fig 2 'Sistema Academico (dashboard) con los 3 roles' "$imgDir\evidencia-dashboard-roles.png"
 
 # ------------------------------------------------------------
 Add-H1 '4. Creacion del contenedor de Docker (Docker Desktop)'
@@ -282,8 +302,8 @@ OK
 '@
 
 Add-H2 '4.4 Evidencia fotografica'
-Add-Fig 3 'Docker Desktop con la imagen tinivalda/avior-web:latest construida'
-Add-Fig 4 'Contenedor avior-web corriendo y sitio accesible en http://localhost'
+Add-Fig 3 'Docker Desktop con la imagen tinivalda/avior-web:latest construida' "$imgDir\evidencia-docker-desktop-imagen.png"
+Add-Fig 4 'Contenedor avior-web corriendo y sitio accesible en http://localhost' "$imgDir\evidencia-contenedor-local-dockerps.png"
 
 # ------------------------------------------------------------
 Add-H1 '5. Publicacion automatica en Docker Hub con GitHub Actions'
@@ -341,8 +361,8 @@ git push -u origin main
 '@
 
 Add-H2 '5.4 Evidencia fotografica'
-Add-Fig 5 'GitHub Actions: workflow "Docker Build & Push a Docker Hub" ejecutandose con exito (verde)'
-Add-Fig 6 'Imagen publicada en Docker Hub: tinivalda/avior-web:latest'
+Add-Fig 5 'GitHub Actions: workflow "Docker Build & Push a Docker Hub" ejecutandose con exito (verde)' "$imgDir\evidencia-github-actions-workflow-exitoso.png"
+Add-Fig 6 'Imagen publicada en Docker Hub: tinivalda/avior-web:latest' "$imgDir\evidencia-docker-hub-imagen-publicada.png"
 
 # ------------------------------------------------------------
 Add-H1 '6. Creacion manual de la VM en Oracle Cloud (OCI)'
@@ -359,7 +379,7 @@ Add-B 'Create Instance y esperar el estado RUNNING con IP publica asignada.'
 Add-H2 '6.2 Conexión a la VM desde la terminal'
 Add-Code @'
 # Windows (PowerShell) - conectarse por SSH
-ssh -i $env:USERPROFILE\.ssh\avior-oci ubuntu@163.176.212.212
+ssh -i $env:USERPROFILE\.ssh\avior-oci ubuntu@150.230.69.130
 
 # Verificar sistema y recursos
 hostnamectl
@@ -367,8 +387,8 @@ df -h
 '@
 
 Add-H2 '6.3 Evidencia fotografica'
-Add-Fig 7 'Consola OCI: formulario de creacion de la instancia (nombre, imagen, plano y clave SSH)'
-Add-Fig 8 'Instancia en estado RUNNING con su IP publica visible'
+Add-Fig 7 'Consola OCI: formulario de creacion de la instancia (nombre, imagen, plano y clave SSH)' "$imgDir\evidencia-oci-formulario-creacion.png"
+Add-Fig 8 'Instancia en estado RUNNING con su IP publica visible' "$imgDir\evidencia-oci-instancia-running-ip.png"
 
 # ------------------------------------------------------------
 Add-H1 '7. Despliegue manual de la solucion en la VM'
@@ -415,18 +435,18 @@ OK
 '@
 
 Add-H2 '7.3 Evidencia fotografica'
-Add-Fig 9 'Terminal de la VM: instalacion de Docker y docker pull de la imagen'
-Add-Fig 10 'docker ps en la VM y sitio publicado en la IP publica'
+Add-Fig 9 'Terminal de la VM: instalacion de Docker y docker pull de la imagen' "$imgDir\evidencia-vm-instalar-docker.png"
+Add-Fig 10 'docker ps en la VM y sitio publicado en la IP publica' "$imgDir\evidencia-vm-docker-ps-sitio.png"
 
 # ------------------------------------------------------------
 Add-H1 '8. Verificacion de la solucion en la IP publica'
 Add-P 'Con el contenedor en ejecucion y el puerto 80 habilitado en la Security List de OCI, la solucion queda disponible en el navegador desde cualquier equipo:'
 Add-Code @'
-http://163.176.212.212          -> Sitio institucional AVIOR
-http://163.176.212.212/login    -> Aula Virtual (Sistema Academico)
-http://163.176.212.212/healthz  -> Endpoint de salud (OK)
+http://150.230.69.130          -> Sitio institucional AVIOR
+http://150.230.69.130/login    -> Aula Virtual (Sistema Academico)
+http://150.230.69.130/healthz  -> Endpoint de salud (OK)
 '@
-Add-Fig 11 'Navegador accediendo a la solucion mediante la IP publica de la VM'
+Add-Fig 11 'Navegador accediendo a la solucion mediante la IP publica de la VM' "$imgDir\evidencia-sitio-en-linea-ip-publica.png"
 
 # ------------------------------------------------------------
 Add-H1 '9. Tabla resumen de comandos'
@@ -467,4 +487,5 @@ $doc.Close()
 $word.Quit()
 [System.Runtime.InteropServices.Marshal]::ReleaseComObject($word) | Out-Null
 Write-Host "Documento generado correctamente."
+
 
